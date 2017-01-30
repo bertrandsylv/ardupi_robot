@@ -1,0 +1,4 @@
+Ligne de commande pour lancer la connexion par liaison série à l'Arduino : 
+rosrun rosserial_python serial_node.py _port:=/dev/ttyACM0 
+
+(ou autre port)

@@ -1,0 +1,9 @@
+rosbagTimestamp,header,seq,stamp,secs,nsecs,frame_id,level,name,msg,file,function,line,topics
+1473509644933833995,,1,,1473509644,851327692,'',2,/record_1473509644816257381,Recording to 2016-09-10-14-14-04.bag.,/tmp/buildd/ros-indigo-rosbag-1.11.13-0trusty-20150523-0140/src/recorder.cpp,Recorder,387,['/rosout']
+1473509644933872659,,2,,1473509644,853362821,'',2,/record_1473509644816257381,Subscribing to /rosout_agg,/tmp/buildd/ros-indigo-rosbag-1.11.13-0trusty-20150523-0140/src/recorder.cpp,shared_ptr<ros,209,['/rosout']
+1473509644934488499,,3,,1473509644,867016293,'',2,/record_1473509644816257381,Subscribing to /ardupi_robot/cmdMotor/right,/tmp/buildd/ros-indigo-rosbag-1.11.13-0trusty-20150523-0140/src/recorder.cpp,shared_ptr<ros,209,['/rosout']
+1473509644934723903,,4,,1473509644,880757006,'',2,/record_1473509644816257381,Subscribing to /ardupi_robot/countEncoder/left,/tmp/buildd/ros-indigo-rosbag-1.11.13-0trusty-20150523-0140/src/recorder.cpp,shared_ptr<ros,209,['/rosout']
+1473509644934795711,,5,,1473509644,892454286,'',2,/record_1473509644816257381,Subscribing to /ardupi_robot/countEncoder/right,/tmp/buildd/ros-indigo-rosbag-1.11.13-0trusty-20150523-0140/src/recorder.cpp,shared_ptr<ros,209,['/rosout']
+1473509644934852831,,6,,1473509644,905940046,'',2,/record_1473509644816257381,Subscribing to /ardupi_robot/cmdMotor/left,/tmp/buildd/ros-indigo-rosbag-1.11.13-0trusty-20150523-0140/src/recorder.cpp,shared_ptr<ros,209,['/rosout']
+1473509644934861015,,7,,1473509644,917735054,'',2,/record_1473509644816257381,Subscribing to /diagnostics,/tmp/buildd/ros-indigo-rosbag-1.11.13-0trusty-20150523-0140/src/recorder.cpp,shared_ptr<ros,209,['/rosout']
+1473509645068093387,,12,,1473509548,867115974,'',2,/serial_node,wrong checksum for topic id and msg,SerialClient.py,run,490,"['/rosout', '/ardupi_robot/cmdMotor/right', '/ardupi_robot/countEncoder/left', '/ardupi_robot/countEncoder/right', '/ardupi_robot/cmdMotor/left', '/diagnostics']"

@@ -1,0 +1,4 @@
+rosbagTimestamp,header,seq,stamp,secs,nsecs,frame_id,level,name,msg,file,function,line,topics
+1484918273482466109,,6,,1484918273,440569031,'',2,/record_1484918273306307155,Subscribing to /rosout,/tmp/buildd/ros-indigo-rosbag-1.11.13-0trusty-20150523-0140/src/recorder.cpp,shared_ptr<ros,209,['/rosout']
+1484918273483890305,,7,,1484918273,461627814,'',2,/record_1484918273306307155,Subscribing to /rosout_agg,/tmp/buildd/ros-indigo-rosbag-1.11.13-0trusty-20150523-0140/src/recorder.cpp,shared_ptr<ros,209,['/rosout']
+1484918273597371846,,9,,1484918202,373425960,'',2,/serial_node,Setup subscriber on ardupi_robot/cmdMotor/right [ardupi_robot/Int32Stamped],SerialClient.py,setupSubscriber,529,"['/rosout', '/ardupi_robot/cmdMotor/right', '/ardupi_robot/countEncoder/left', '/ardupi_robot/countEncoder/right', '/ardupi_robot/cmdMotor/left', '/diagnostics']"

@@ -1,0 +1,8 @@
+noued driver à développer
+
+entrée : commande en vitesse twist
+sortie : odométrie
+
+à l'intérieur : estimation des vitesses des roues, PID sur chaque roue
+
+

@@ -14,6 +14,7 @@ class Wheel:
         self.encoderCount = 0
         self.encoderCountPrev = 0
         self.lastTimeCountChange = 0.0
+        self.encoderResolution = 20
         
 
 class Robot:

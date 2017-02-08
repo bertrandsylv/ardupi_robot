@@ -9,7 +9,7 @@
 """
 
 import rospy
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, TwistStamped
 from nav_msgs.msg import Odometry
 from ardupi_robot.msg import Int32Stamped # for receiving navdata feedback
 import numpy as np
@@ -30,8 +30,8 @@ robot = robotClass.Robot(interWheelDistance=0.15, wheelDiameter=0.05, x0=0.0, y0
 # publishers
 # -----------
 # wheel speed estimated from wheel encoders (linear and angular)
-pubLeftWheelSpeed = rospy.Publisher('ardupi_robot/wheelSpeed/left', Twist, queue_size=10)
-pubRightWheelSpeed = rospy.Publisher('ardupi_robot/wheelSpeed/right', Twist, queue_size=10)
+pubLeftWheelSpeed = rospy.Publisher('ardupi_robot/wheelSpeed/left', TwistStamped, queue_size=10)
+pubRightWheelSpeed = rospy.Publisher('ardupi_robot/wheelSpeed/right', TwistStamped, queue_size=10)
 # odometry estimated from wheel encoders 
 pubOdometry = rospy.Publisher('ardupi_robot/odom', Odometry, queue_size=10)
 # publish on these topics to send control values to the robot  (in [-255,+255])
@@ -44,8 +44,28 @@ pubRightMotorCmd = rospy.Publisher('ardupi_robot/cmdMotor/right', Int32Stamped, 
 
 def callBackLeftEncoderCount(data):
     global robot
+    msgTwist = TwistStamped()    
+    
+    msgTwist.header = data.header
+    
     robot.leftWheel.encoderCount = data.data 
-    print robot.leftWheel.encoderCount
+    t = data.header.stamp.secs + 1.E-9*data.header.stamp.nsecs
+    deltaT = t-robot.leftWheel.lastTimeCountChange
+    print deltaT
+#    print robot.leftWheel.encoderCount
+#    rospy.loginfo(rospy.get_name() + " - time: %f" % t)
+    
+    # angular speed computation
+    if (deltaT>0.0):
+        robot.leftWheel.omega = (robot.leftWheel.encoderCount - robot.leftWheel.encoderCountPrev)*(2.0*np.pi/robot.leftWheel.encoderResolution) / deltaT
+        robot.leftWheel.lastTimeCountChange = t
+        robot.leftWheel.encoderCountPrev = robot.leftWheel.encoderCount
+        print robot.leftWheel.omega
+        
+        msgTwist.twist.angular.z = robot.leftWheel.omega
+        pubLeftWheelSpeed.publish(msgTwist)
+        
+        
 
 def callBackRightEncoderCount(data):
     global robot    

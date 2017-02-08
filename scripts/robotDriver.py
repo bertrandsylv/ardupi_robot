@@ -44,11 +44,12 @@ pubRightMotorCmd = rospy.Publisher('ardupi_robot/cmdMotor/right', Int32Stamped, 
 
 def callBackLeftEncoderCount(data):
     global robot
-    print data
+    robot.leftWheel.encoderCount = data.data 
+    print robot.leftWheel.encoderCount
 
 def callBackRightEncoderCount(data):
     global robot    
-    print data
+    robot.rightWheel.encoderCount = data.data
 
 def callBackCmdVel(data):
     global robot    

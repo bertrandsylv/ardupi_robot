@@ -6,11 +6,14 @@
 """
 
 class Wheel:
+    
     def __init__(self, diameter):
         self.diameter = diameter
         self.v = 0.0
         self.omega = 0.0
         self.encoderCount = 0
+        self.encoderCountPrev = 0
+        self.lastTimeCountChange = 0.0
         
 
 class Robot:
@@ -26,7 +29,7 @@ class Robot:
         self.v = 0.0
         self.omega = 0.0
         self.interWheelDistance = interWheelDistance
-        self.leftWeel = Wheel(wheelDiameter)
+        self.leftWheel = Wheel(wheelDiameter)
         self.rightWheel = Wheel(wheelDiameter)
         
 

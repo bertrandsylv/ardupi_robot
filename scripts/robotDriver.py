@@ -51,16 +51,23 @@ def callBackLeftEncoderCount(data):
     robot.leftWheel.encoderCount = data.data 
     t = data.header.stamp.secs + 1.E-9*data.header.stamp.nsecs
     deltaT = t-robot.leftWheel.lastTimeCountChange
-    print deltaT
+#    print deltaT
 #    print robot.leftWheel.encoderCount
 #    rospy.loginfo(rospy.get_name() + " - time: %f" % t)
     
     # angular speed computation
     if (deltaT>0.0):
-        robot.leftWheel.omega = (robot.leftWheel.encoderCount - robot.leftWheel.encoderCountPrev)*(2.0*np.pi/robot.leftWheel.encoderResolution) / deltaT
+        
+        # first order filter
+        omegaOld = robot.leftWheel.omega        
+        omega = (robot.leftWheel.encoderCount - robot.leftWheel.encoderCountPrev)*(2.0*np.pi/robot.leftWheel.encoderResolution) / deltaT      
+        alpha = 0.3
+        robot.leftWheel.omega = alpha*omega + (1.0-alpha)*omegaOld
+        
+        
         robot.leftWheel.lastTimeCountChange = t
         robot.leftWheel.encoderCountPrev = robot.leftWheel.encoderCount
-        print robot.leftWheel.omega
+#        print robot.leftWheel.omega
         
         msgTwist.twist.angular.z = robot.leftWheel.omega
         pubLeftWheelSpeed.publish(msgTwist)

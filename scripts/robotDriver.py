@@ -44,39 +44,62 @@ pubRightMotorCmd = rospy.Publisher('ardupi_robot/cmdMotor/right', Int32Stamped, 
 
 def callBackLeftEncoderCount(data):
     global robot
-    msgTwist = TwistStamped()    
-    
-    msgTwist.header = data.header
     
     robot.leftWheel.encoderCount = data.data 
     t = data.header.stamp.secs + 1.E-9*data.header.stamp.nsecs
     deltaT = t-robot.leftWheel.lastTimeCountChange
-#    print deltaT
-#    print robot.leftWheel.encoderCount
 #    rospy.loginfo(rospy.get_name() + " - time: %f" % t)
     
     # angular speed computation
     if (deltaT>0.0):
-        
         # first order filter
         omegaOld = robot.leftWheel.omega        
         omega = (robot.leftWheel.encoderCount - robot.leftWheel.encoderCountPrev)*(2.0*np.pi/robot.leftWheel.encoderResolution) / deltaT      
         alpha = 0.3
         robot.leftWheel.omega = alpha*omega + (1.0-alpha)*omegaOld
         
-        
+        # updates for next iteration
         robot.leftWheel.lastTimeCountChange = t
         robot.leftWheel.encoderCountPrev = robot.leftWheel.encoderCount
-#        print robot.leftWheel.omega
         
+        # message to be published
+        msgTwist = TwistStamped()    
+        msgTwist.header = data.header
         msgTwist.twist.angular.z = robot.leftWheel.omega
+        # publication
         pubLeftWheelSpeed.publish(msgTwist)
         
         
 
 def callBackRightEncoderCount(data):
-    global robot    
-    robot.rightWheel.encoderCount = data.data
+    global robot
+    
+    robot.rightWheel.encoderCount = data.data 
+    t = data.header.stamp.secs + 1.E-9*data.header.stamp.nsecs
+    deltaT = t-robot.rightWheel.lastTimeCountChange
+#    rospy.loginfo(rospy.get_name() + " - time: %f" % t)
+    
+    # angular speed computation
+    if (deltaT>0.0):
+        # first order filter
+        omegaOld = robot.rightWheel.omega        
+        omega = (robot.rightWheel.encoderCount - robot.rightWheel.encoderCountPrev)*(2.0*np.pi/robot.rightWheel.encoderResolution) / deltaT      
+        alpha = 0.3
+        robot.rightWheel.omega = alpha*omega + (1.0-alpha)*omegaOld
+        
+        # updates for next iteration
+        robot.rightWheel.lastTimeCountChange = t
+        robot.rightWheel.encoderCountPrev = robot.rightWheel.encoderCount
+        
+        # message to be published
+        msgTwist = TwistStamped()    
+        msgTwist.header = data.header
+        msgTwist.twist.angular.z = robot.rightWheel.omega
+        # publication
+        pubRightWheelSpeed.publish(msgTwist)
+
+
+
 
 def callBackCmdVel(data):
     global robot    

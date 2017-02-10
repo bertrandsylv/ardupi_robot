@@ -11,6 +11,7 @@ class Wheel:
         self.diameter = diameter
         self.v = 0.0
         self.omega = 0.0
+        self.omegaRef = 0.0
         self.encoderCount = 0
         self.encoderCountPrev = 0
         self.lastTimeCountChange = 0.0

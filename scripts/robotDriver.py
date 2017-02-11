@@ -39,7 +39,9 @@ pubOdometry = rospy.Publisher('ardupi_robot/odom', Odometry, queue_size=10)
 pubLeftMotorCmd = rospy.Publisher('ardupi_robot/cmdMotor/left', Int32Stamped, queue_size=10)
 pubRightMotorCmd = rospy.Publisher('ardupi_robot/cmdMotor/right', Int32Stamped, queue_size=10)
 # frequency of PID control of wheel angular velocities
-motorCmdPubRate = rospy.Rate(10)
+fe = 10
+Te = 1/fe
+motorCmdPubRate = rospy.Rate(fe)
 
 # subscribers callbacks
 # ----------------------
@@ -142,12 +144,23 @@ if __name__ == '__main__':
     uLeftMsg = Int32Stamped()
     uRightMsg = Int32Stamped()
     kp = 50.0  #value chosen to ensure good ctrl values u for v~10cm/s and omega~45deg/s
+    ki = 0.0
+    epsilonPrecLeft = 0.0
+    epsilonPrecRight = 0.0
+    integralLeft = 0.0
+    integralRight = 0.0
 
     while not rospy.is_shutdown():
 
-         # PID for wheel speed regulation         
-         uLeft = kp*(robot.leftWheel.omegaRef - robot.leftWheel.omega)    
-         uRight = kp*(robot.rightWheel.omegaRef - robot.rightWheel.omega)
+         # PID for wheel speed regulation
+         epsilonLeft = robot.leftWheel.omegaRef - robot.leftWheel.omega
+         epsilonRight = robot.rightWheel.omegaRef - robot.rightWheel.omega
+
+         integralLeft = integralLeft + Te*(epsilonLeft - epsilonPrecLeft)         
+         integralRight = integralRight + Te*(epsilonRight - epsilonPrecRight)
+         
+         uLeft = kp*epsilonLeft + ki*integralLeft   
+         uRight = kp*epsilonRight + ki*integralRight
          
          # saturations
          uLeft = np.clip(uLeft, -255, 255)
@@ -164,7 +177,11 @@ if __name__ == '__main__':
          # msgs publications
          pubLeftMotorCmd.publish(uLeftMsg)
          pubRightMotorCmd.publish(uRightMsg)
-                  
+         
+         # update for next iteration
+         epsilonPrecLeft = epsilonLeft
+         epsilonPrecRight = epsilonRight
+         
          
          motorCmdPubRate.sleep()
 

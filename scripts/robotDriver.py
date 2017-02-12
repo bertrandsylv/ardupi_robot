@@ -24,7 +24,7 @@ rospy.init_node('ardupi_robot_driver', anonymous=True)
 # robot object
 # ------------
 # **** TO DO: put encoderResolution, wheel diameter and inter wheels dist as parameters (YAML)
-robot = robotClass.Robot(interWheelDistance=0.15, wheelDiameter=0.05, x0=0.0, y0=0.0, theta0=0.0)
+robot = robotClass.Robot(interWheelDistance=0.138, wheelDiameter=0.065, x0=0.0, y0=0.0, theta0=0.0)
 
 
 
@@ -43,10 +43,13 @@ fe = 10
 Te = 1/fe
 motorCmdPubRate = rospy.Rate(fe)
 
+
 # subscribers callbacks
 # ----------------------
 
+# -----------------------------------------------------------------------------
 def callBackLeftEncoderCount(data):
+# -----------------------------------------------------------------------------
     global robot
     
     robot.leftWheel.encoderCount = data.data 
@@ -72,12 +75,12 @@ def callBackLeftEncoderCount(data):
         msgTwist.twist.angular.z = robot.leftWheel.omega
         # publication
         pubLeftWheelSpeed.publish(msgTwist)
-
-    
-    # **** TO DO : odometry
+# -----------------------------------------------------------------------------        
         
-
+        
+# -----------------------------------------------------------------------------
 def callBackRightEncoderCount(data):
+# -----------------------------------------------------------------------------
     global robot
     
     robot.rightWheel.encoderCount = data.data 
@@ -103,14 +106,12 @@ def callBackRightEncoderCount(data):
         msgTwist.twist.angular.z = robot.rightWheel.omega
         # publication
         pubRightWheelSpeed.publish(msgTwist)
+# -----------------------------------------------------------------------------
 
 
-    # **** TO DO : PID for wheel speed regulation
-
-    # **** TO DO : odometry
-
-
+# -----------------------------------------------------------------------------
 def callBackCmdVel(data):
+# -----------------------------------------------------------------------------
     global robot
 
     # get linear and angular velocities
@@ -126,6 +127,7 @@ def callBackCmdVel(data):
     robot.leftWheel.omegaRef =  0.5 * (2.0*robot.Vref - d*robot.omegaRef)/r    
 
     rospy.loginfo(rospy.get_name() + " (%f , %f)" % (robot.leftWheel.omegaRef , robot.rightWheel.omegaRef))
+# -----------------------------------------------------------------------------
    
    
 # subscribers
@@ -136,19 +138,28 @@ rospy.Subscriber("ardupi_robot/cmd_vel", Twist, callBackCmdVel)
 
 
 
+
 # main node loop
 # ---------------
+
+# -----------------------------------------------------------------------------
 if __name__ == '__main__':
+# -----------------------------------------------------------------------------
     #rospy.spin()    
-    
+
+    # for PID control    
     uLeftMsg = Int32Stamped()
     uRightMsg = Int32Stamped()
-    kp = 50.0  #value chosen to ensure good ctrl values u for v~10cm/s and omega~45deg/s
-    ki = 0.0
+    kp = 1.4 #50.0  #value chosen to ensure good ctrl values u for v~10cm/s and omega~45deg/s
+    ki = 0.15 #0.0
     epsilonPrecLeft = 0.0
     epsilonPrecRight = 0.0
     integralLeft = 0.0
     integralRight = 0.0
+
+
+    # for odometry
+    
 
     while not rospy.is_shutdown():
 
@@ -185,3 +196,4 @@ if __name__ == '__main__':
          
          motorCmdPubRate.sleep()
 
+# -----------------------------------------------------------------------------

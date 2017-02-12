@@ -7,6 +7,16 @@
 
 # **** TO DO: put encoderResolution, wheel diameter and inter wheels dist as parameters (YAML)
 
+
+class Odometer:
+    
+    def __init__(self):
+        self.leftWheelTheta = 0.0
+        self.rightWheelTheta = 0.0
+        self.leftWheelThetaPrec = 0.0
+        self.rightWheelThetaPrec = 0.0
+
+
 class Wheel:
     
     def __init__(self, diameter):
@@ -37,7 +47,7 @@ class Robot:
         self.interWheelDistance = interWheelDistance
         self.leftWheel = Wheel(wheelDiameter)
         self.rightWheel = Wheel(wheelDiameter)
-        
+        self.odometer = Odometer()
 
 
 if __name__=='__main__':

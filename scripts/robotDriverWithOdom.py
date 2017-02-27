@@ -38,10 +38,10 @@ pubOdometry = rospy.Publisher('ardupi_robot/odom', Odometry, queue_size=10)
 # publish on these topics to send control values to the robot  (in [-255,+255])
 pubLeftMotorCmd = rospy.Publisher('ardupi_robot/cmdMotor/left', Int32Stamped, queue_size=10)
 pubRightMotorCmd = rospy.Publisher('ardupi_robot/cmdMotor/right', Int32Stamped, queue_size=10)
-# frequency of PID control of wheel angular velocities
+# frequency of main loop (PID control of wheel angular velocities and odometry)
 fe = 10
 Te = 1/fe
-motorCmdPubRate = rospy.Rate(fe)
+mainLoopRate = rospy.Rate(fe)
 
 
 # subscribers callbacks
@@ -148,6 +148,8 @@ if __name__ == '__main__':
 # -----------------------------------------------------------------------------
     #rospy.spin()    
 
+    global robot
+
     # for PID control    
     uLeftMsg = Int32Stamped()
     uRightMsg = Int32Stamped()
@@ -192,6 +194,6 @@ if __name__ == '__main__':
          epsilonPrecRight = epsilonRight         
 
 
-         motorCmdPubRate.sleep()
+         mainLoopRate.sleep()
 
 # -----------------------------------------------------------------------------

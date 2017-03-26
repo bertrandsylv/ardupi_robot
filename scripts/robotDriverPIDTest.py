@@ -37,7 +37,7 @@ pubRightWheelSpeed = rospy.Publisher('ardupi_robot/wheelSpeed/right', TwistStamp
 pubLeftMotorCmd = rospy.Publisher('ardupi_robot/cmdMotor/left', Int32Stamped, queue_size=10)
 pubRightMotorCmd = rospy.Publisher('ardupi_robot/cmdMotor/right', Int32Stamped, queue_size=10)
 # frequency of PID control of wheel angular velocities
-fe = 10
+fe = 10.0
 Te = 1/fe
 motorCmdPubRate = rospy.Rate(fe)
 
@@ -151,12 +151,18 @@ if __name__ == '__main__':
     # for PID control    
     uLeftMsg = Int32Stamped()
     uRightMsg = Int32Stamped()
-    kp = 1.4 #50.0  #value chosen to ensure good ctrl values u for v~10cm/s and omega~45deg/s
-    ki = 0.15 #0.0
+    kp = 0.2#1.4 #50.0  #value chosen to ensure good ctrl values u for v~10cm/s and omega~45deg/s
+    # 0.5 : instable    
+    ki = 0.0 #0.0
+    kd = 0.1
     epsilonPrecLeft = 0.0
     epsilonPrecRight = 0.0
     integralLeft = 0.0
     integralRight = 0.0
+    uLeftPrec = 0.0
+    uRightPrec = 0.0
+    
+    print Te
 
 
     while not rospy.is_shutdown():
@@ -164,12 +170,16 @@ if __name__ == '__main__':
          # PID for wheel speed regulation
          epsilonLeft = robot.leftWheel.omegaRef - robot.leftWheel.omega
          epsilonRight = robot.rightWheel.omegaRef - robot.rightWheel.omega
+         epsilonDLeft = (epsilonLeft-epsilonPrecLeft)/Te
+         epsilonDRight = (epsilonRight-epsilonPrecRight)/Te
+         
+#         print epsilonLeft
 
          integralLeft = integralLeft + Te*(epsilonLeft - epsilonPrecLeft)         
          integralRight = integralRight + Te*(epsilonRight - epsilonPrecRight)
          
-         uLeft = kp*epsilonLeft + ki*integralLeft   
-         uRight = kp*epsilonRight + ki*integralRight
+         uLeft = uLeftPrec + kp*epsilonLeft + ki*integralLeft + kd*epsilonDLeft
+         uRight = uRightPrec + kp*epsilonRight + ki*integralRight + kd*epsilonDRight
          
          # saturations
          uLeft = np.clip(uLeft, -255, 255)
@@ -190,7 +200,8 @@ if __name__ == '__main__':
          # update for next iteration
          epsilonPrecLeft = epsilonLeft
          epsilonPrecRight = epsilonRight         
-
+         uLeftPrec = uLeft
+         uRightPrec = uRight
 
          motorCmdPubRate.sleep()
 
